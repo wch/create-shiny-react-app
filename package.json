@@ -27,6 +27,6 @@
     "generator"
   ],
   "dependencies": {
-    "shiny-react": "^0.0.5"
+    "@posit/shiny-react": "^0.0.6"
   }
 }
