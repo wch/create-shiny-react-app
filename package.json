@@ -1,0 +1,32 @@
+{
+  "name": "create-shiny-react-app",
+  "version": "0.0.1",
+  "description": "CLI tool to create new shiny-react applications",
+  "author": "Winston Chang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wch/create-shiny-react-app.git"
+  },
+  "bin": {
+    "create-shiny-react-app": "./bin/create-shiny-react-app.js"
+  },
+  "files": [
+    "bin/"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "shiny",
+    "react",
+    "r",
+    "python",
+    "cli",
+    "template",
+    "generator"
+  ],
+  "dependencies": {
+    "shiny-react": "^0.0.5"
+  }
+}
