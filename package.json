@@ -1,6 +1,6 @@
 {
   "name": "create-shiny-react-app",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CLI tool to create new shiny-react applications",
   "author": "Winston Chang",
   "license": "MIT",
