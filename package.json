@@ -28,5 +28,11 @@
   ],
   "dependencies": {
     "@posit/shiny-react": "^0.0.6"
+  },
+  "prettier": {
+    "jsxSingleQuote": true,
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "es5"
   }
 }
