@@ -180,7 +180,7 @@ function showBackends() {
 function getNextSteps(appName, selectedBackend) {
   const steps = [
     `cd ${appName}`,
-    "npm install      # This may take a while",
+    "npm install",
     "npm run watch    # Start development with automatic rebuilds of JavaScript and CSS files",
   ];
 
