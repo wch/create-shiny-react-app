@@ -111,7 +111,10 @@ function updatePackageJson(targetDir, appName, selectedBackend) {
     packageJson.version = "1.0.0";
 
     // Update shiny-react dependency to use npm package
-    if (packageJson.dependencies && packageJson.dependencies["@posit/shiny-react"]) {
+    if (
+      packageJson.dependencies &&
+      packageJson.dependencies["@posit/shiny-react"]
+    ) {
       packageJson.dependencies["@posit/shiny-react"] = "^0.0.6";
     }
 
