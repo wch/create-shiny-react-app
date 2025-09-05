@@ -164,53 +164,14 @@ async function main() {
     process.exit(1);
   }
 
-  // Locate shiny-react package templates
-  let shinyReactPath;
-  try {
-    // Try to resolve from the CLI package's node_modules first
-    const cliPackageDir = path.dirname(__dirname);
+  // Use templates from this CLI package
+  const cliPackageDir = path.dirname(__dirname);
+  const templatesDir = path.join(cliPackageDir, "templates");
 
-    // Try different resolution strategies
-    try {
-      const resolvedPath = require.resolve("@posit/shiny-react", {
-        paths: [cliPackageDir],
-      });
-      // The resolved path is to the entry point (dist/index.js), we need the package root
-      shinyReactPath = path.dirname(path.dirname(resolvedPath));
-    } catch (e1) {
-      // Fallback: try direct path to node_modules
-      const directPath = path.join(
-        cliPackageDir,
-        "node_modules",
-        "@posit/shiny-react"
-      );
-      if (fs.existsSync(directPath)) {
-        shinyReactPath = directPath;
-      } else {
-        throw new Error("Package not found");
-      }
-    }
-  } catch (error) {
-    console.error("Error: @posit/shiny-react package not found.");
-    console.error("Please ensure @posit/shiny-react is installed.");
-    console.error("Run: npm install -g create-shiny-react-app");
-    process.exit(1);
-  }
-
-  let templatesDir = path.join(shinyReactPath, "templates");
-
-  // Fallback for development: check if we're in the development environment
   if (!fs.existsSync(templatesDir)) {
-    const devTemplatesDir = path.join(__dirname, "..", "..", "templates");
-    if (fs.existsSync(devTemplatesDir)) {
-      templatesDir = devTemplatesDir;
-      console.log("Using development templates directory");
-    } else {
-      console.error(
-        "Error: templates/ directory not found in @posit/shiny-react package or development directory."
-      );
-      process.exit(1);
-    }
+    console.error("Error: templates/ directory not found in CLI package.");
+    console.error("Please ensure create-shiny-react-app is properly installed.");
+    process.exit(1);
   }
 
   // Get available templates dynamically
@@ -342,10 +303,11 @@ async function main() {
     console.log(
       `Then, in Positron, RStudio, or other editor, open ${appFilesString} and launch the app,`
     );
-    console.log("OR, in another terminal, run the following:");
+    console.log("or, in another terminal, run the following:");
 
     if (selectedBackend.id === "r" || selectedBackend.id === "both") {
       console.log("  # For R backend:");
+      console.log(`  cd ${appName}`);
       console.log(
         "  R -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)\""
       );
@@ -357,11 +319,12 @@ async function main() {
 
     if (selectedBackend.id === "py" || selectedBackend.id === "both") {
       console.log("  # For Python backend:");
+      console.log(`  cd ${appName}`);
       console.log("  shiny run py/app.py --port 8000 --reload");
     }
 
     console.log("");
-    console.log("Open http://localhost:8000 in your browser");
+    console.log("Open http://localhost:8000 in your browser.");
 
     if (selectedTemplate.id.includes("chat")) {
       console.log("");

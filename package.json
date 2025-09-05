@@ -12,7 +12,8 @@
     "create-shiny-react-app": "./bin/create-shiny-react-app.js"
   },
   "files": [
-    "bin/"
+    "bin/",
+    "templates/"
   ],
   "engines": {
     "node": ">=18.0.0"
@@ -26,9 +27,6 @@
     "template",
     "generator"
   ],
-  "dependencies": {
-    "@posit/shiny-react": "^0.0.6"
-  },
   "prettier": {
     "jsxSingleQuote": true,
     "semi": true,
