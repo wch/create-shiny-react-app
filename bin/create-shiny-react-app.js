@@ -16,6 +16,8 @@ const BACKENDS = [
   { id: "both", name: "Both R and Python" },
 ];
 
+const SKIP_PATHS = ["node_modules", "www", "__pycache__", ".DS_Store"];
+
 // Dynamically discover available templates
 function getAvailableTemplates(templatesDir) {
   if (!fs.existsSync(templatesDir)) {
@@ -30,7 +32,7 @@ function getAvailableTemplates(templatesDir) {
     const templatePath = path.join(templatesDir, entry);
     const stat = fs.statSync(templatePath);
 
-    if (stat.isDirectory() && !entry.startsWith(".")) {
+    if (stat.isDirectory() && !SKIP_PATHS.includes(entry)) {
       // Read package.json or README.md to get template info
       let name = entry;
       let description = "Shiny-React template";
@@ -85,7 +87,7 @@ function copyRecursive(src, dest, options = {}) {
     const files = fs.readdirSync(src);
     files.forEach((file) => {
       // Skip node_modules and build outputs
-      if (file === "node_modules" || file === "www") {
+      if (SKIP_PATHS.includes(file)) {
         return;
       }
 
@@ -108,48 +110,6 @@ function updatePackageJson(targetDir, appName, selectedBackend) {
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
     packageJson.name = appName;
-    packageJson.version = "1.0.0";
-
-    // Update shiny-react dependency to use npm package
-    if (
-      packageJson.dependencies &&
-      packageJson.dependencies["@posit/shiny-react"]
-    ) {
-      packageJson.dependencies["@posit/shiny-react"] = "^0.0.6";
-    }
-
-    // Generate build scripts based on backend selection
-    const scripts = {};
-
-    if (selectedBackend === "r") {
-      scripts.build =
-        "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react && tsc --noEmit";
-      scripts.watch =
-        'concurrently "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react --watch" "tsc --noEmit --watch"';
-      scripts.clean = "rm -rf r/www";
-    } else if (selectedBackend === "py") {
-      scripts.build =
-        "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react && tsc --noEmit";
-      scripts.watch =
-        'concurrently "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react --watch" "tsc --noEmit --watch"';
-      scripts.clean = "rm -rf py/www";
-    } else if (selectedBackend === "both") {
-      scripts.build =
-        'concurrently "npm run build-r" "npm run build-py" "tsc --noEmit"';
-      scripts.watch =
-        'concurrently "npm run watch-r" "npm run watch-py" "tsc --noEmit --watch"';
-      scripts["build-r"] =
-        "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react";
-      scripts["watch-r"] =
-        "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react --watch";
-      scripts["build-py"] =
-        "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react";
-      scripts["watch-py"] =
-        "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react --watch";
-      scripts.clean = "rm -rf r/www py/www";
-    }
-
-    packageJson.scripts = scripts;
 
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
   }
@@ -178,35 +138,6 @@ function showBackends() {
     console.log(`  ${index + 1}. ${backend.name}`);
     console.log("");
   });
-}
-
-function getNextSteps(appName, selectedBackend) {
-  const steps = [
-    `cd ${appName}`,
-    "npm install",
-    "npm run watch    # Start development with automatic rebuilds of JavaScript and CSS files",
-  ];
-
-  return steps;
-}
-
-function getBackendInstructions(selectedBackend) {
-  const instructions = [];
-
-  if (selectedBackend === "r" || selectedBackend === "both") {
-    instructions.push("  # For R backend:");
-    instructions.push(
-      "  R -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)\""
-    );
-  }
-
-  if (selectedBackend === "py" || selectedBackend === "both") {
-    if (instructions.length > 0) instructions.push("");
-    instructions.push("  # For Python backend:");
-    instructions.push("  shiny run py/app.py --port 8000 --reload");
-  }
-
-  return instructions;
 }
 
 async function main() {
@@ -276,7 +207,7 @@ async function main() {
       console.log("Using development templates directory");
     } else {
       console.error(
-        "Error: Templates directory not found in @posit/shiny-react package or development directory."
+        "Error: templates/ directory not found in @posit/shiny-react package or development directory."
       );
       process.exit(1);
     }
@@ -336,12 +267,25 @@ async function main() {
     console.log("");
 
     // Ask about CLAUDE.md
-    const includeClaude = await question(
-      "Include CLAUDE.md for LLM assistance? (y/N): "
-    );
-    const shouldIncludeClaude =
-      includeClaude.toLowerCase() === "y" ||
-      includeClaude.toLowerCase() === "yes";
+    let includeClaude;
+    let shouldIncludeClaude;
+
+    do {
+      includeClaude = await question(
+        "Include CLAUDE.md for LLM assistance? (y/n): "
+      );
+      const lowerResponse = includeClaude.toLowerCase();
+
+      if (lowerResponse === "y" || lowerResponse === "yes") {
+        shouldIncludeClaude = true;
+        break;
+      } else if (lowerResponse === "n" || lowerResponse === "no") {
+        shouldIncludeClaude = false;
+        break;
+      } else {
+        console.log("Please enter 'y', 'yes', 'n', or 'no'.");
+      }
+    } while (true);
 
     console.log("");
     console.log(`Template: ${selectedTemplate.name} (${selectedTemplate.id})`);
@@ -377,13 +321,44 @@ async function main() {
     console.log("");
     console.log("Next steps:");
 
-    const nextSteps = getNextSteps(appName, selectedBackend.id);
-    nextSteps.forEach((step) => console.log(`  ${step}`));
+    console.log(`  cd ${appName}`);
+    console.log("  npm install");
+    console.log(
+      "  npm run watch  # Start automatic rebuilds of JavaScript and CSS"
+    );
 
     console.log("");
-    console.log("Then in another terminal:");
-    const backendInstructions = getBackendInstructions(selectedBackend.id);
-    backendInstructions.forEach((instruction) => console.log(instruction));
+
+    let appFilesString = "";
+    if (selectedBackend.id === "r" || selectedBackend.id === "both") {
+      appFilesString += "r/app.R";
+    }
+    if (selectedBackend.id === "both") {
+      appFilesString += " or ";
+    }
+    if (selectedBackend.id === "py" || selectedBackend.id === "both") {
+      appFilesString += "py/app.py";
+    }
+    console.log(
+      `Then, in Positron, RStudio, or other editor, open ${appFilesString} and launch the app,`
+    );
+    console.log("OR, in another terminal, run the following:");
+
+    if (selectedBackend.id === "r" || selectedBackend.id === "both") {
+      console.log("  # For R backend:");
+      console.log(
+        "  R -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)\""
+      );
+    }
+
+    if (selectedBackend.id === "both") {
+      console.log("");
+    }
+
+    if (selectedBackend.id === "py" || selectedBackend.id === "both") {
+      console.log("  # For Python backend:");
+      console.log("  shiny run py/app.py --port 8000 --reload");
+    }
 
     console.log("");
     console.log("Open http://localhost:8000 in your browser");
