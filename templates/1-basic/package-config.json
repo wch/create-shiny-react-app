@@ -1,0 +1,28 @@
+{
+  "note": "The content below will be substituted into package.json, depending on language selected by the user when creating the app.",
+  "r": {
+    "scripts": {
+      "build": "concurrently -c auto \"tsc --noEmit\" \"esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react\"",
+      "watch": "concurrently -c auto \"tsc --noEmit --watch --preserveWatchOutput\" \"esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react --watch\"",
+      "clean": "rm -rf r/www"
+    }
+  },
+  "py": {
+    "scripts": {
+      "build": "concurrently -c auto \"tsc --noEmit\" \"esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react\"",
+      "watch": "concurrently -c auto \"tsc --noEmit --watch --preserveWatchOutput\" \"esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react --watch\"",
+      "clean": "rm -rf py/www"
+    }
+  },
+  "both": {
+    "scripts": {
+      "build": "concurrently -c auto \"npm run build-r\" \"npm run build-py\" \"tsc --noEmit\"",
+      "watch": "concurrently -c auto \"npm run watch-r\" \"npm run watch-py\" \"tsc --noEmit --watch --preserveWatchOutput\"",
+      "build-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react",
+      "watch-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react --watch",
+      "build-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react",
+      "watch-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react --watch",
+      "clean": "rm -rf r/www py/www"
+    }
+  }
+}

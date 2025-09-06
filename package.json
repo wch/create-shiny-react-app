@@ -18,6 +18,20 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "devDependencies": {
+    "@posit/shiny": "^1.11.1",
+    "@types/node": "^24.3.0",
+    "@types/react-dom": "^19.1.7",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.2.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0"
+  },
   "keywords": [
     "shiny",
     "react",
@@ -26,11 +40,5 @@
     "cli",
     "template",
     "generator"
-  ],
-  "prettier": {
-    "jsxSingleQuote": true,
-    "semi": true,
-    "singleQuote": false,
-    "trailingComma": "es5"
-  }
+  ]
 }

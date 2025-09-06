@@ -16,7 +16,7 @@ The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receiv
   - `shinyreact.py` - Python utility functions
 - **`srcts/`** - TypeScript/React source code
   - `main.tsx` - Entry point that renders the React app
-  - `HelloWorldComponent.tsx` - Main React component using shiny-react hooks
+  - `ExampleComponent.tsx` - Main React component using shiny-react hooks
   - `styles.css` - Simple CSS styling for the application
 - **`r/www/`** - Built JavaScript output for R Shiny app (generated)
 - **`py/www/`** - Built JavaScript output for Python Shiny app (generated)

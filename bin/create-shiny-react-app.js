@@ -107,9 +107,42 @@ function copyRecursive(src, dest, options = {}) {
 
 function updatePackageJson(targetDir, appName, selectedBackend) {
   const packageJsonPath = path.join(targetDir, "package.json");
+  const packageConfigPath = path.join(targetDir, "package-config.json");
+
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
     packageJson.name = appName;
+
+    // Apply backend-specific configuration if available
+    if (fs.existsSync(packageConfigPath)) {
+      try {
+        const packageConfig = JSON.parse(
+          fs.readFileSync(packageConfigPath, "utf8")
+        );
+        const backendConfig = packageConfig[selectedBackend];
+
+        if (backendConfig) {
+          // Replace scripts entirely with backend-specific configuration
+          if (backendConfig.scripts) {
+            packageJson.scripts = backendConfig.scripts;
+          }
+
+          // Apply any other backend-specific configurations
+          Object.keys(backendConfig).forEach((key) => {
+            if (key !== "scripts") {
+              packageJson[key] = { ...packageJson[key], ...backendConfig[key] };
+            }
+          });
+        }
+
+        // Remove the package-config.json file after applying it
+        fs.unlinkSync(packageConfigPath);
+      } catch (e) {
+        console.log(
+          "Warning: Could not apply package configuration, using defaults"
+        );
+      }
+    }
 
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
   }
@@ -170,7 +203,9 @@ async function main() {
 
   if (!fs.existsSync(templatesDir)) {
     console.error("Error: templates/ directory not found in CLI package.");
-    console.error("Please ensure create-shiny-react-app is properly installed.");
+    console.error(
+      "Please ensure create-shiny-react-app is properly installed."
+    );
     process.exit(1);
   }
 
