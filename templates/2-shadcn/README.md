@@ -4,35 +4,26 @@ This example demonstrates how to set up and use **shadcn/ui** components with **
 
 ## What This Example Demonstrates
 
-### Shiny-React Integration
-- **Basic Input/Output**: Demonstrates `useShinyInput` and `useShinyOutput` hooks for bidirectional communication
-- **Modern UI**: Clean, professional interface using shadcn/ui components
-- **TypeScript Integration**: Full type safety throughout the application
-
 ### shadcn/ui Setup
-- **Theme System**: CSS variables for light/dark modes and custom design tokens
-- **Component Library**: Card, Input, and Separator components for clean UI layout
-- **Component Installation**: Shows how shadcn/ui integrates with the build system
+- **Theme System**: CSS variables in `srcts/globals.css` for light/dark modes and custom design tokens
+- **shadcn/ui CLI**: `components.json` configures the shadcn CLI for component installation
 
 ### Tailwind CSS
-- **Tailwind CSS v4**: Uses the latest Tailwind CSS v4 with native CSS imports
+- **Tailwind CSS v4**
 - **Global Styles**: Configured in `srcts/globals.css` with `@import "tailwindcss"`
-- **CSS Variables**: Complete design system with CSS variables for light/dark themes
-- **Animations**: Includes `tw-animate-css` plugin for enhanced animations
 - **Build Integration**: Tailwind processing handled by `esbuild-plugin-tailwindcss` in the build script
 
 ### Build Configuration
-- **Custom Build Script**: `build.ts` using esbuild with Tailwind CSS plugin
-- **Dual Backend Support**: Automatically builds for both R and Python backends
-- **Watch Mode**: Uses chokidar for efficient file watching (avoids esbuild's high CPU polling)
-- **Production Ready**: Supports production builds with minification
-- **Hot Reload**: Debounced rebuilds for smooth development experience
+- **Custom Build Script**: `build.ts` generates the main.js and main.css files
 
-### Editor Configuration
-- **TypeScript Path Aliases**: Configured in `tsconfig.json` with `@/*` mapping to `srcts/*`
-- **Prettier Integration**: Includes Prettier with `prettier-plugin-organize-imports`
-- **CSS Module Types**: `css.d.ts` provides TypeScript support for CSS imports
-- **shadcn/ui CLI**: `components.json` configures the shadcn CLI for component installation
+### Linter/Editor Configuration
+
+This example includes configuration files for TypeScript, Prettier, and ESLint. It also includes a VSCode settings file which does things like auto-format files on save. You can remove or change these files to fit your taste.
+
+- **TypeScript** (TypeScript type checker): `tsconfig.json`
+- **ESLint** (JavaScript and TypeScript linter): `eslint.config.mjs`
+- **Prettier** (code formatter): `.prettierrc`
+- **VSCode** (editor settings): `.vscode/settings.json`
 
 ### AI Coding Agent Integration
 - **Context File**: When you instantiate the app, you can choose to add a CLAUDE.md file with information about shiny-react and shadcn/ui. This will be used as context for the Claude Code coding agent. If you wish to use a different AI coding agent, you may need to change this filename.

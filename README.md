@@ -31,6 +31,19 @@ shiny run py/app.py --port 8000 --reload
 Open http://localhost:8000 in your browser to see your app.
 
 
+## Templates
+
+Click on the template name to view its code and README.md file.
+
+- [**1-basic**](templates/1-basic/):
+    - This is the most basic template, showing how to use shiny-react with R and Python backends.
+
+- [**2-shadcn**](templates/2-shadcn/):
+    - This template shows how to use shiny-react with shadcn/ui, tailwindcss, and MCP server for shadcn/ui components.
+    - It can include a CLAUDE.md file for AI coding assistance.
+    - It also has editor and linter configuration files for a streamlined development experience.
+
+
 ## Installation
 
 ### Option 1: Use with npx (Recommended)
