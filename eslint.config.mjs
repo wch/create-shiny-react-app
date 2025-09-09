@@ -10,11 +10,11 @@ import url from "url";
 const currentFilename = url.fileURLToPath(new URL(import.meta.url));
 const currentDirname = path.dirname(currentFilename);
 const commonRules = {
-  "@typescript-eslint/naming-convention": "off",
   curly: ["warn", "multi-line"],
   eqeqeq: "warn",
   "no-throw-literal": "warn",
   semi: "warn",
+  "@typescript-eslint/naming-convention": "off",
   "@typescript-eslint/no-empty-object-type": "off",
   "@typescript-eslint/no-unused-vars": "off",
   "@typescript-eslint/consistent-type-imports": "warn",
