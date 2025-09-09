@@ -6,7 +6,7 @@ import React from "react";
 
 export function App() {
   const [txtin, setTxtin] = useShinyInput<string>("txtin", "Hello, world!");
-  const txtout = useShinyOutput<string>("txtout", undefined);
+  const [txtout, _] = useShinyOutput<string>("txtout", undefined);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTxtin(event.target.value);
