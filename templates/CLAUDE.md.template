@@ -83,7 +83,7 @@ npm run build
    R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
 
    # For Python backend
-   shiny run py/app.py --port 8000
+   shiny run py/app.py --port 8000 --reload
    ```
 
 3. **Open browser**: Navigate to `http://localhost:8000`
