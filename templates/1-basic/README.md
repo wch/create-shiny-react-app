@@ -4,7 +4,7 @@ This is a basic template example demonstrating how to use the shiny-react librar
 
 The front end is implemented with React and TypeScript. The Shiny backend can be implemented in either R or Python (or both). Depending on which language(s) you selected when creating this app, you may have an `r/` directory, a `py/` directory, or both.
 
-The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receive values from the Shiny back end. The back end is a Shiny application that uses `renderText` (in R) or `render.text` (in Python) to render the output values. In this example, the Shiny back end simply capitalizes the input value and sends it back to the front end.
+The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receive values from the Shiny back end. The back end is a Shiny application that uses `render_json` to send the output values to the front end as JSON. In this example, the Shiny back end simply capitalizes the input value and sends it back to the front end.
 
 ## Directory Structure
 
