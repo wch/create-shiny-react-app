@@ -3,7 +3,7 @@
   "name": "shiny-react-template-shadcn",
   "version": "0.1.0",
   "type": "module",
-  "description": "Basic shiny-react template with shadcn/ui components",
+  "description": "Basic shiny-react template with shadcn/ui components and opinionated editor and build configuration",
   "scripts": {
     "build": "concurrently -c auto \"tsc --noEmit\" \"tsx build.ts\"",
     "watch": "concurrently -c auto \"tsc --noEmit --watch --preserveWatchOutput\" \"tsx build.ts --watch\"",
@@ -28,7 +28,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@posit/shiny-react": "^0.0.10",
+    "@posit/shiny-react": "^0.0.11",
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "class-variance-authority": "^0.7.1",
