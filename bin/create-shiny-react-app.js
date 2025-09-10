@@ -268,15 +268,19 @@ async function main() {
 
     do {
       includeClaude = await question(
-        "Include CLAUDE.md for LLM assistance? (y/n): "
+        "Include CLAUDE.md for LLM assistance? (Y/n): "
       );
       const lowerResponse = includeClaude.toLowerCase();
 
-      if (lowerResponse === "y" || lowerResponse === "yes") {
-        shouldIncludeClaude = true;
-        break;
-      } else if (lowerResponse === "n" || lowerResponse === "no") {
+      if (lowerResponse === "n" || lowerResponse === "no") {
         shouldIncludeClaude = false;
+        break;
+      } else if (
+        lowerResponse === "y" ||
+        lowerResponse === "yes" ||
+        lowerResponse === ""
+      ) {
+        shouldIncludeClaude = true;
         break;
       } else {
         console.log("Please enter 'y', 'yes', 'n', or 'no'.");
