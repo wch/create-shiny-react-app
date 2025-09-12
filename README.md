@@ -30,13 +30,13 @@ PORT=8001 npm run dev
 Some other ways of building the frontend and running the app:
 
 ```bash
-# Build frontend once
+# Build frontend once (without launching Shiny app)
 npm run build
 
-# Build frontend and auto-rebuild on changes
+# Build frontend and auto-rebuild on changes (without launching Shiny app)
 npm run watch
 
-# Start backend manually (in separate terminal)
+# Start Shiny app manually (in separate terminal)
 # For R backend
 R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
 
