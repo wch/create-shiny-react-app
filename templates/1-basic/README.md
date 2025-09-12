@@ -22,37 +22,76 @@ The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receiv
 - **`py/www/`** - Built JavaScript output for Python Shiny app (generated)
 - **`node_modules/`** - npm dependencies (generated)
 
-## Building
+## Getting Started
 
 ```bash
 # Install dependencies
 npm install
 
-# Build the JS/CSS files
+# Start development with hot-reload (recommended)
+npm run dev
+```
+
+The `npm run dev` command will automatically:
+- Build the TypeScript/React frontend
+- Start the Shiny server with hot-reload
+- Open your browser to http://localhost:8000
+
+## Available npm Scripts
+
+This template includes the following npm scripts:
+
+### Development Scripts
+
+- **`npm run dev`** - 🚀 **Start development** - Builds frontend and starts Shiny server with hot-reload
+- **`npm run watch`** - 👀 **Watch frontend** - Watch TypeScript/React files for changes and rebuild
+- **`npm run shinyapp`** - 🖥️ **Start Shiny server** - Start only the backend server (Python by default)
+
+### Build Scripts  
+
+- **`npm run build`** - 🔨 **Build frontend** - Compile TypeScript/React to JavaScript once
+- **`npm run clean`** - 🧹 **Clean build** - Remove generated `www/` directories
+
+### Port Configuration
+
+You can customize the port (default is 8000):
+
+```bash
+# Use custom port
+PORT=3000 npm run dev
+PORT=3000 npm run shinyapp
+```
+
+## Manual Development Setup
+
+If you prefer to run the frontend and backend separately:
+
+### 1. Build the Frontend
+
+```bash
+# Build once
 npm run build
 
-# OR, watch files for changes and automatically rebuild
+# OR watch for changes and rebuild automatically
 npm run watch
 ```
 
-The build process compiles the TypeScript React code and CSS into JavaScript bundles output directly to `r/www/main.js` and/or `py/www/main.js`.
+The build process compiles TypeScript/React code and outputs to:
+- `r/www/main.js` (R backend)
+- `py/www/main.js` (Python backend)
 
+### 2. Start the Backend
 
-The watch mode runs three processes concurrently:
-   - TypeScript type checking in watch mode
-   - ESBuild bundling for R app (outputs to `r/www/main.js`)
-   - ESBuild bundling for Python app (outputs to `py/www/main.js`)
-
-In a separate terminal, run either the R or Python Shiny application:
+In a separate terminal:
 
 ```bash
-# For R (if you have an r/ directory)
+# For R backend (if you have r/ directory)
 R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
 
-# For Python (if you have a py/ directory)
+# For Python backend (if you have py/ directory)  
 shiny run py/app.py --port 8000 --reload
 ```
 
-The commands above use port 8000, but you can use a different port.
+### 3. View Your App
 
-Now you can open your web browser and navigate to `http://localhost:8000` to see the Shiny-React application in action.
+Open your browser and navigate to `http://localhost:8000`.

@@ -74,33 +74,91 @@ my-app/
 npm install
 ```
 
-### 2. Build the Frontend
+### 2. Start Development
 
 ```bash
-# Build once
+# Start development with hot-reload (recommended)
+npm run dev
+```
+
+The `npm run dev` command will automatically:
+- Build the TypeScript/React frontend with Tailwind CSS
+- Start the Shiny server with hot-reload
+- Open your browser to http://localhost:8000
+
+## Available npm Scripts
+
+This template includes the following npm scripts:
+
+### Development Scripts
+
+- **`npm run dev`** - 🚀 **Start development** - Builds frontend and starts Shiny server with hot-reload
+- **`npm run watch`** - 👀 **Watch frontend** - Watch TypeScript/React files for changes, rebuild with Tailwind CSS processing
+- **`npm run shinyapp`** - 🖥️ **Start Shiny server** - Start only the backend server (Python by default)
+
+### Build Scripts
+
+- **`npm run build`** - 🔨 **Development build** - Build frontend with TypeScript checking and Tailwind CSS processing
+- **`npm run build-prod`** - 📦 **Production build** - Optimized build with minification for production deployment
+- **`npm run clean`** - 🧹 **Clean build** - Remove all generated build files (`r/www/`, `py/www/`, `build/`)
+
+### Port Configuration
+
+You can customize the port (default is 8000):
+
+```bash
+# Use custom port
+PORT=3000 npm run dev
+PORT=3000 npm run shinyapp
+```
+
+## Manual Development Setup
+
+If you prefer to run the frontend and backend separately:
+
+### 1. Build the Frontend
+
+```bash
+# Development build with TypeScript checking and Tailwind CSS
 npm run build
 
-# Or watch for changes during development
+# OR watch for changes and rebuild automatically
 npm run watch
 ```
 
-### 3. Run the Shiny Server
+The build process:
+- Compiles TypeScript/React code with path aliases (`@/` → `srcts/`)
+- Processes Tailwind CSS with custom theme variables
+- Outputs to `r/www/main.js` and `r/www/main.css` (R backend)
+- Outputs to `py/www/main.js` and `py/www/main.css` (Python backend)
 
-**Option A: R Backend**
+### 2. Install Backend Dependencies
+
+**For Python Backend:**
 ```bash
-R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
+# Install Python dependencies
+pip install -r py/requirements.txt
 ```
 
-**Option B: Python Backend**
+**For R Backend:**
 ```bash
-# Install Python dependencies first
-pip install -r py/requirements.txt
+# Install R packages (run in R console)
+install.packages("shiny")
+```
 
-# Run the server
+### 3. Start the Backend
+
+In a separate terminal:
+
+```bash
+# For R backend (if you have r/ directory)
+R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
+
+# For Python backend (if you have py/ directory)
 shiny run py/app.py --port 8000 --reload
 ```
 
-### 4. Open Your Browser
+### 4. View Your App
 
 Navigate to `http://localhost:8000` to see the shadcn/ui components in action.
 

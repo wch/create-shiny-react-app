@@ -7,28 +7,42 @@ A CLI tool to quickly create new shiny-react applications with pre-configured te
 The fastest way to create a new shiny-react application is with npx (no installation required):
 
 ```bash
-# Create a new app in my-app/
-npx create-shiny-react-app my-app
+# Create a new app in myapp/
+npx create-shiny-react-app myapp
 # You will be asked which template and which backend (R or Python) to use
 
-cd my-app
+cd myapp
 npm install
-npm run watch
+npm run dev  # Builds frontend and starts Shiny app
 ```
 
-Then, in Positron, RStudio, or other editor, open r/app.R or py/app.py and launch the app. Or, in another terminal, start the app:
+The `npm run dev` command will build the frontend and start the Shiny app automatically with hot-reload. By default it will use port 8000.
+
+Open http://localhost:8000 in your browser to see your app.
+
+
+You can change the port by setting the `PORT` environment variable:
 
 ```bash
+PORT=8001 npm run dev
+```
+
+Some other ways of building the frontend and running the app:
+
+```bash
+# Build frontend once
+npm run build
+
+# Build frontend and auto-rebuild on changes
+npm run watch
+
+# Start backend manually (in separate terminal)
 # For R backend
-cd my-app
 R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
 
 # For Python backend
-cd my-app
 shiny run py/app.py --port 8000 --reload
 ```
-
-Open http://localhost:8000 in your browser to see your app.
 
 
 ## Templates
@@ -38,15 +52,15 @@ Click on the template name to view its code and README.md file.
 - [**1-basic**](templates/1-basic/):
     - This is the most basic template, showing how to use shiny-react with R and Python backends.
 
-- [**2-shadcn**](templates/2-shadcn/):
-    - This template shows how to use shiny-react with shadcn/ui, tailwindcss, and MCP server for shadcn/ui components.
+- [**2-scaffold**](templates/2-scaffold/):
+    - This template shows how to use shiny-react with shadcn/ui and tailwindcss.
     - It can include a CLAUDE.md file for AI coding assistance.
     - It also has editor and linter configuration files for a streamlined development experience.
 
 
 ## Installation
 
-### Option 1: Use with npx (Recommended)
+### Option 1: Use with npx
 
 No installation required. Always uses the latest version:
 
@@ -93,6 +107,27 @@ my-app/
     ├── app.py         # Main Python Shiny application
     ├── shinyreact.py  # Python functions for shiny-react
     └── www/           # Built JavaScript/CSS output (generated)
+```
+
+## Available npm Scripts
+
+Generated applications include the following npm scripts:
+
+- **`npm run dev`** - **Start development** - Builds frontend and starts Shiny server with hot-reload
+- **`npm run build`** - **Production build** - Build frontend once (includes TypeScript checking)
+- **`npm run watch`** - **Development build** - Watch frontend files for changes and rebuild automatically
+- **`npm run shinyapp`** - **Start Shiny server** - Start only the Shiny backend server
+- **`npm run build-prod`** - **Optimized build** - Production build with optimization (advanced templates)
+- **`npm run clean`** - **Clean build** - Remove all generated files
+
+### Port Configuration
+
+You can configure the port for the Shiny server:
+
+```bash
+# Use custom port (default is 8000)
+PORT=3000 npm run dev
+PORT=3000 npm run shinyapp
 ```
 
 ## Requirements
