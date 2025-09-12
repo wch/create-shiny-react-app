@@ -107,17 +107,17 @@ function copyRecursive(src, dest, options = {}) {
 
 function updatePackageJson(targetDir, appName, selectedBackend) {
   const packageJsonPath = path.join(targetDir, "package.json");
-  const packageConfigPath = path.join(targetDir, "package-config.json");
+  const packageCustomPath = path.join(targetDir, "package-custom.json");
 
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
     packageJson.name = appName;
 
     // Apply backend-specific configuration if available
-    if (fs.existsSync(packageConfigPath)) {
+    if (fs.existsSync(packageCustomPath)) {
       try {
         const packageConfig = JSON.parse(
-          fs.readFileSync(packageConfigPath, "utf8")
+          fs.readFileSync(packageCustomPath, "utf8")
         );
         const backendConfig = packageConfig[selectedBackend];
 
@@ -135,8 +135,8 @@ function updatePackageJson(targetDir, appName, selectedBackend) {
           });
         }
 
-        // Remove the package-config.json file after applying it
-        fs.unlinkSync(packageConfigPath);
+        // Remove the package-custom.json file after applying it
+        fs.unlinkSync(packageCustomPath);
       } catch (e) {
         console.log(
           "Warning: Could not apply package configuration, using defaults"
