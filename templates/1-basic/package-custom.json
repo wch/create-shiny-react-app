@@ -4,6 +4,7 @@
     "scripts": {
       "build": "concurrently -c auto \"tsc --noEmit\" \"esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --sourcemap --minify --alias:react=react\"",
       "watch": "concurrently -c auto \"tsc --noEmit --watch --preserveWatchOutput\" \"esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --sourcemap --minify --alias:react=react --watch\"",
+      "shinyapp": "R -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=${PORT:-8000})\"",
       "clean": "rm -rf r/www"
     }
   },
@@ -11,18 +12,8 @@
     "scripts": {
       "build": "concurrently -c auto \"tsc --noEmit\" \"esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --sourcemap --minify --alias:react=react\"",
       "watch": "concurrently -c auto \"tsc --noEmit --watch --preserveWatchOutput\" \"esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --sourcemap --minify --alias:react=react --watch\"",
+      "shinyapp": "cd py && shiny run app.py --reload --port ${PORT:-8000}",
       "clean": "rm -rf py/www"
-    }
-  },
-  "both": {
-    "scripts": {
-      "build": "concurrently -c auto \"npm run build-r\" \"npm run build-py\" \"tsc --noEmit\"",
-      "watch": "concurrently -c auto \"npm run watch-r\" \"npm run watch-py\" \"tsc --noEmit --watch --preserveWatchOutput\"",
-      "build-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --sourcemap --minify --alias:react=react",
-      "watch-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --sourcemap --minify --alias:react=react --watch",
-      "build-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --sourcemap --minify --alias:react=react",
-      "watch-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --sourcemap --minify --alias:react=react --watch",
-      "clean": "rm -rf r/www py/www"
     }
   }
 }

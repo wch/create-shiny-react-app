@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Basic shiny-react template web app",
   "scripts": {
-    "note": "See package-custom.json for build scripts that will be substituted in here."
+    "dev": "concurrently -c auto \"npm run watch\" \"npm run shinyapp\""
   },
   "author": "Winston Chang",
   "license": "MIT",

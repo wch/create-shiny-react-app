@@ -3,10 +3,12 @@
   "name": "shiny-react-template-shadcn",
   "version": "0.1.0",
   "type": "module",
-  "description": "Basic shiny-react template with shadcn/ui components and opinionated editor and build configuration",
+  "description": "Shiny-react template with shadcn/ui, tailwindcss, and opinionated editor and build configuration",
   "scripts": {
+    "dev": "concurrently -c auto \"npm run watch\" \"npm run shinyapp\"",
     "build": "concurrently -c auto \"tsc --noEmit\" \"tsx build.ts\"",
     "watch": "concurrently -c auto \"tsc --noEmit --watch --preserveWatchOutput\" \"tsx build.ts --watch\"",
+    "shinyapp": "shiny run py/app.py --reload --port ${PORT:-8000}",
     "build-prod": "tsc --noEmit && tsx build.ts --production",
     "clean": "rm -rf r/www py/www build"
   },
