@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { useShinyInput, useShinyOutput } from "@posit/shiny-react";
 import React from "react";
 
@@ -29,8 +28,6 @@ export function App() {
                 placeholder='Enter your message here...'
               />
             </div>
-
-            <Separator />
 
             <div className='space-y-2'>
               <label className='text-sm font-medium'>
