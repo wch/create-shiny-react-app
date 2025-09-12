@@ -28,7 +28,7 @@ You may have access to a shadcn/ui MCP server. If so, use it to find and install
 ├── srcts/                  # React TypeScript source code
 │   ├── main.tsx            # React app entry point
 │   ├── *.tsx               # React components using shiny-react hooks
-│   └── styles.css          # CSS styling
+│   └── styles.css/globals.css  # CSS styling
 ├── r/                      # R Shiny backend
 │   ├── app.R               # Main R Shiny application
 │   ├── shinyreact.R        # R functions for shiny-react
