@@ -112,7 +112,7 @@ If you prefer more control, you can run the frontend and backend separately:
    # For R backend
    R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
 
-   # For Python backend  
+   # For Python backend
    shiny run py/app.py --port 8000 --reload
    ```
 
@@ -266,7 +266,7 @@ def server(input, output, session):
 
 ### Development Tips
 - **Use browser DevTools**: Check console for React/JavaScript errors
-- **Monitor Shiny logs**: Watch R/Python console for server-side errors  
+- **Monitor Shiny logs**: Watch R/Python console for server-side errors
 - **Verify IDs match**: Input/output IDs must be identical in React and Shiny code
 - **Check network tab**: Verify WebSocket communication between client and server
 - **Use the right npm script**:
@@ -450,33 +450,88 @@ const [plotData, plotDataRecalc] = useShinyOutput<ImageData>("plot1", undefined)
 ```typescript
 function ImageOutput({
   id,
-  className
+  className,
+  width,
+  height,
+  debounceMs = 400
 }: {
   id: string;
   className?: string;
+  width?: string;
+  height?: string;
+  debounceMs?: number;
 }): JSX.Element
 ```
 
-**Purpose**: Displays plot images from Shiny with automatic dimension tracking and progress indication.
+**Purpose**: Displays Shiny image outputs with dynamic sizing capabilities. Unlike typical web images that have an inherent size, this component tells the server to generate an image that is sized to fit the dimensions of the img element. The element must have a width and height, either through CSS or through the width and height props.
+
+**Parameters**:
+- `id`: The Shiny output ID corresponding to a renderImage() call on the server
+- `className`: Optional CSS class name to apply to the img element
+- `width`: Optional width as a CSS size string (e.g., "300px", "50%", "auto")
+- `height`: Optional height as a CSS size string (e.g., "200px", "50vh", "auto")
+- `debounceMs`: Debounce delay in milliseconds for dimension changes (default: 400ms)
 
 **Features**:
-- Automatically tracks image dimensions and sends to server via `.clientdata_output_${id}_width/height`
-- Shows loading state while plots are being generated
-- Handles image resize events with debounced dimension updates
-- Supports opacity changes during recalculation
+- Automatically tracks rendered dimensions and sends them to Shiny via clientData
+- Updates Shiny when image size changes using ResizeObserver with debouncing
+- Shows loading state (reduced opacity) when image is recalculating
+- Hides image when Shiny sets the hidden state
+- Handles image load events for accurate dimension reporting
 
 **Usage**:
 ```typescript
 import { ImageOutput } from "@posit/shiny-react";
 
+// With explicit dimensions
 function PlotCard() {
   return (
     <div>
       <h2>My Plot</h2>
-      <ImageOutput id="plot1" className="my-plot-styles" />
+      <ImageOutput id="plot1" width="400px" height="300px" />
     </div>
   );
 }
+
+
+// With CSS-controlled dimensions
+function ResponsivePlot() {
+  return (
+    <div>
+      <h2>Responsive Plot</h2>
+      <ImageOutput id="plot2" className="responsive-image" />
+    </div>
+  );
+}
+
+// CSS for responsive sizing:
+// .responsive-image {
+//   width: 100%;
+//   height: 100dvh; /* Full viewport height */
+// }
+
+
+// With flex container for height determined by container:
+function FlexPlot() {
+  return (
+    <div className="flex-container">
+      <ImageOutput id="plot3" className="flex-image" />
+    </div>
+  );
+}
+
+// CSS:
+// .flex-container {
+//   display: flex;
+//   flex-direction: column;
+//   height: 500px;
+// }
+// .flex-image {
+//   flex: 1;
+//   width: 100%;
+//   height: 100%;
+//   min-height: 300px;
+// }
 ```
 
 **Backend Requirements**:
@@ -1584,7 +1639,7 @@ b = reactive.value(2)
 def _():
     a.set(b() + 1)  # a depends on b
 
-@reactive.effect  
+@reactive.effect
 def _():
     b.set(a() + 1)  # b depends on a - CIRCULAR!
 
@@ -1649,7 +1704,7 @@ observe({
 observe({
   input$click
   isolate({
-    counter(counter() + 1) 
+    counter(counter() + 1)
   })
 })
 
