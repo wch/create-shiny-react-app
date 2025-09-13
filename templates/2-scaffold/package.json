@@ -34,7 +34,7 @@
     "typescript-eslint": "^8.43.0"
   },
   "dependencies": {
-    "@posit/shiny-react": "^0.0.12",
+    "@posit/shiny-react": "^0.0.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.542.0",
