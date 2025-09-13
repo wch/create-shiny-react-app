@@ -107,8 +107,10 @@ This template includes the following npm scripts:
 You can customize the port (default is 8000):
 
 ```bash
-# Use custom port
+# Use custom port while building both frontend and backend
 PORT=3000 npm run dev
+
+# Or, to just run the Shiny app
 PORT=3000 npm run shinyapp
 ```
 
@@ -119,6 +121,9 @@ If you prefer to run the frontend and backend separately:
 ### 1. Build the Frontend
 
 ```bash
+# Install dependencies
+npm install
+
 # Development build with TypeScript checking and Tailwind CSS
 npm run build
 
@@ -132,10 +137,20 @@ The build process:
 - Outputs to `r/www/main.js` and `r/www/main.css` (R backend)
 - Outputs to `py/www/main.js` and `py/www/main.css` (Python backend)
 
-### 2. Install Backend Dependencies
+### 2. Set up the Backend
 
 **For Python Backend:**
+
+**Optional:** create a virtual environment for your dependencies, with either
 ```bash
+# OPTION 1: Use uv
+uv venv
+# OPTION 2: Use the venv package
+python -m venv .venv
+
+# Activate the virtual environment
+source .venv/bin/activate
+
 # Install Python dependencies
 pip install -r py/requirements.txt
 ```
@@ -148,7 +163,14 @@ install.packages("shiny")
 
 ### 3. Start the Backend
 
-In a separate terminal:
+If you are using Python with a virtual environment, activate it (as described above), and then launch the app.
+
+```bash
+npm run shinyapp
+```
+
+
+Alternatively, you can run the app with R or Python commands (the `npm run shinyapp` command is just a wrapper for these commands):
 
 ```bash
 # For R backend (if you have r/ directory)

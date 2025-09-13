@@ -47,7 +47,7 @@ This template includes the following npm scripts:
 - **`npm run watch`** - 👀 **Watch frontend** - Watch TypeScript/React files for changes and rebuild
 - **`npm run shinyapp`** - 🖥️ **Start Shiny server** - Start only the backend server (Python by default)
 
-### Build Scripts  
+### Build Scripts
 
 - **`npm run build`** - 🔨 **Build frontend** - Compile TypeScript/React to JavaScript once
 - **`npm run clean`** - 🧹 **Clean build** - Remove generated `www/` directories
@@ -57,8 +57,10 @@ This template includes the following npm scripts:
 You can customize the port (default is 8000):
 
 ```bash
-# Use custom port
+# Use custom port while building both frontend and backend
 PORT=3000 npm run dev
+
+# Or, to just run the Shiny app
 PORT=3000 npm run shinyapp
 ```
 
@@ -82,13 +84,17 @@ The build process compiles TypeScript/React code and outputs to:
 
 ### 2. Start the Backend
 
-In a separate terminal:
+```bash
+npm run shinyapp
+```
+
+Or, if you wish to run the backend server with R or Python commands:
 
 ```bash
 # For R backend (if you have r/ directory)
 R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
 
-# For Python backend (if you have py/ directory)  
+# For Python backend (if you have py/ directory)
 shiny run py/app.py --port 8000 --reload
 ```
 
