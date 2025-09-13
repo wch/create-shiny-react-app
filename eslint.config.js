@@ -1,7 +1,7 @@
-import eslint from "@eslint/js";
 import tsParser from "@typescript-eslint/parser";
 import reactEslint from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
 import path from "path";
 import tseslint from "typescript-eslint";
@@ -9,6 +9,7 @@ import url from "url";
 
 const currentFilename = url.fileURLToPath(new URL(import.meta.url));
 const currentDirname = path.dirname(currentFilename);
+
 const commonRules = {
   curly: ["warn", "multi-line"],
   eqeqeq: "warn",
@@ -20,27 +21,14 @@ const commonRules = {
   "@typescript-eslint/consistent-type-imports": "warn",
 };
 
-const commonTsConfig = {
-  parser: tsParser,
-  ecmaVersion: 2022,
-  sourceType: "module",
-  parserOptions: {
-    tsconfigRootDir: currentDirname,
-    ecmaVersion: 2022,
-    sourceType: "module",
-    project: "./tsconfig.json",
-    ecmaFeatures: {
-      jsx: true,
-    },
-  },
-};
-
-export default tseslint.config(
-  eslint.configs.recommended,
+export default defineConfig([
   ...tseslint.configs.recommended,
   {
+    ignores: ["node_modules", "**/www/*", "**/.venv/*"],
+  },
+  {
     // JavaScript scripts - these are run by nodejs.
-    files: ["eslint.config.mjs", "bin/**/*.js"],
+    files: ["eslint.config.js", "bin/**/*.js"],
     languageOptions: {
       globals: globals.node,
       ecmaVersion: 2022,
@@ -56,17 +44,22 @@ export default tseslint.config(
     // Browser/React TypeScript
     files: ["templates/**/*.{ts,tsx}"],
     ...reactEslint.configs.flat.recommended,
-    ...reactEslint.configs.flat["jsx-runtime"],
+    ...reactEslint.configs.flat["jsx-r1time"],
     plugins: {
       react: reactEslint,
       "react-hooks": reactHooks,
     },
     languageOptions: {
-      ...commonTsConfig,
+      parser: tsParser,
+      ecmaVersion: 2022,
+      sourceType: "module",
       globals: globals.browser,
       parserOptions: {
-        ...commonTsConfig.parserOptions,
+        tsconfigRootDir: currentDirname,
         project: "tsconfig.json",
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
     settings: {
@@ -88,5 +81,5 @@ export default tseslint.config(
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/no-misused-promises": "error",
     },
-  }
-);
+  },
+]);
