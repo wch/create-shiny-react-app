@@ -55,23 +55,53 @@ You may have access to a shadcn/ui MCP server. If so, use it to find and install
 - **`r/shinyreact.R`** or **`py/shinyreact.py`**: Utility functions for bare page setup and custom renderers
 - **`r/www/`** or **`py/www/`**: Auto-generated build output (JavaScript and CSS bundles)
 
-## Build Commands
+## Available npm Scripts
 
-### Development Workflow
+This application includes several npm scripts for different development and build workflows:
+
+### Development Scripts (Recommended)
+
+- **`npm run dev`** - 🚀 **Primary development command** - Builds frontend and starts Shiny server automatically with hot-reload
+- **`npm run watch`** - 👀 **Frontend-only watching** - Watch TypeScript/React files for changes and rebuild automatically
+- **`npm run shinyapp`** - 🖥️ **Backend-only server** - Start only the Shiny server (Python by default)
+
+### Build Scripts
+
+- **`npm run build`** - 🔨 **Development build** - Build frontend once with TypeScript checking and CSS processing
+- **`npm run build-prod`** - 📦 **Production build** - Optimized build with minification (advanced templates)
+- **`npm run clean`** - 🧹 **Clean build** - Remove all generated build files
+
+### Port Configuration
+
+You can customize the port (default is 8000):
+```bash
+# Use custom port
+PORT=3000 npm run dev
+PORT=3000 npm run shinyapp
+```
+
+## Quick Start Development Workflow
+
+### Method 1: All-in-One Development (Recommended)
+
 ```bash
 # Install dependencies
 npm install
 
-# Development with hot reload (builds for both R and Python)
-npm run watch
-
-# One-time build (builds for both R and Python)
-npm run build
+# Start development with hot-reload (builds frontend + starts server)
+npm run dev
 ```
 
-## Running the Application
+This single command will:
+- Build the TypeScript/React frontend with CSS processing
+- Start the Shiny server with hot-reload enabled
+- Automatically open your browser to `http://localhost:8000`
+- Watch for changes and rebuild/restart as needed
 
-### Development Setup
+### Method 2: Manual Development Setup
+
+If you prefer more control, you can run the frontend and backend separately:
+
 1. **Start build watcher** (in one terminal):
    ```bash
    npm run watch
@@ -82,11 +112,21 @@ npm run build
    # For R backend
    R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
 
-   # For Python backend
+   # For Python backend  
    shiny run py/app.py --port 8000 --reload
    ```
 
 3. **Open browser**: Navigate to `http://localhost:8000`
+
+### Production Deployment
+
+For production builds:
+```bash
+# Create optimized production build
+npm run build-prod
+
+# Deploy the generated www/ directories along with your Shiny app
+```
 
 ## How Shiny-React Works
 
@@ -171,21 +211,33 @@ def server(input, output, session):
 
 ## Common Development Tasks
 
+### Starting Development
+- **Quick start**: Run `npm run dev` - This starts both frontend building and backend server with hot-reload
+- **Frontend only**: Run `npm run watch` - Rebuilds frontend on file changes
+- **Backend only**: Run `npm run shinyapp` - Starts only the Shiny server
+
 ### Adding a New Input/Output Pair
 1. **In React component**: Add `useShinyInput` and `useShinyOutput` hooks
 2. **In Shiny server**: Add corresponding input handler and output renderer
-3. **Rebuild**: Run `npm run build` or use watch mode
+3. **Automatic rebuild**: If using `npm run dev` or `npm run watch`, changes are detected automatically
+4. **Manual rebuild**: Run `npm run build` for one-time builds
 
 ### Adding New React Components
 1. **Create component file** in `srcts/` directory
 2. **Import and use** in main component or `main.tsx`
 3. **Follow shiny-react patterns** for any Shiny communication
-4. **Update styling** in `styles.css` if needed
+4. **Update styling** in `styles.css` or `globals.css` if needed
+5. **Auto-rebuild**: Components are automatically rebuilt when using `npm run dev` or `npm run watch`
 
 ### Modifying Backend Logic
 - **R**: Edit `r/app.R` for server logic, `r/shinyreact.R` for utilities
 - **Python**: Edit `py/app.py` for server logic, `py/shinyreact.py` for utilities
-- **No rebuild needed** for backend changes (Shiny auto-reloads if configured)
+- **No rebuild needed** for backend changes (Shiny auto-reloads if using `npm run dev` or manual server with `--reload` flag)
+
+### Making Production Builds
+- **Optimized build**: Run `npm run build-prod` (advanced templates)
+- **Development build**: Run `npm run build`
+- **Clean slate**: Run `npm run clean` to remove all generated files before building
 
 ## Architecture Details
 
@@ -206,25 +258,42 @@ def server(input, output, session):
 ### Common Issues
 1. **"Shiny not found" errors**: Ensure Shiny server is running and accessible
 2. **Build failures**: Check that all dependencies are installed (`npm install`)
-3. **Hot reload not working**: Restart watch mode (`npm run watch`)
+3. **Hot reload not working**: Restart development mode (`npm run dev` or `npm run watch`)
 4. **Data not syncing**: Verify matching input/output IDs between React and Shiny
 5. **TypeScript errors**: Check type definitions and imports
+6. **npm script not found**: Verify the script exists in your template's `package.json`
+7. **Port already in use**: Use `PORT=<number> npm run dev` to change the port
 
 ### Development Tips
 - **Use browser DevTools**: Check console for React/JavaScript errors
-- **Monitor Shiny logs**: Watch R/Python console for server-side errors
+- **Monitor Shiny logs**: Watch R/Python console for server-side errors  
 - **Verify IDs match**: Input/output IDs must be identical in React and Shiny code
 - **Check network tab**: Verify WebSocket communication between client and server
+- **Use the right npm script**:
+  - `npm run dev` - For complete development (frontend + backend)
+  - `npm run watch` - For frontend-only development
+  - `npm run build` - For one-time builds
 
 ### Port Conflicts
-If port 8000 is in use, change the port:
+If port 8000 is in use, you have several options:
 ```bash
+# Option 1: Use environment variable (recommended)
+PORT=8001 npm run dev
+PORT=8001 npm run shinyapp
+
+# Option 2: Manual server startup with custom port
 # R
 R -e "shiny::runApp('r/app.R', port=8001)"
 
 # Python
 shiny run py/app.py --port 8001
 ```
+
+### Build Issues
+- **TypeScript errors**: Run `npm run build` to see detailed TypeScript errors
+- **Missing dependencies**: Run `npm install` to ensure all packages are installed
+- **Stale build**: Run `npm run clean` to remove old build files, then `npm run build`
+- **CSS not loading**: Verify CSS files are being generated in the `www/` directories
 
 ## Testing Approach
 - **Manual testing**: Run the app and verify input/output behavior
@@ -1077,27 +1146,24 @@ The server can send **custom messages** directly to React components for notific
 
 ### Client-Side Message Handling
 
-Register message handlers in React components using `window.Shiny.addCustomMessageHandler`:
+Register message handlers in React components using the `useShinyMessageHandler` hook:
 
 ```typescript
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useShinyMessageHandler } from "@posit/shiny-react";
 
 function App() {
   const [toasts, setToasts] = useState<Array<{id: number, message: string, type: string}>>([]);
 
-  useEffect(() => {
-    const handleLogEvent = (msg: { message: string; type: string }) => {
-      const newToast = { id: Date.now(), message: msg.message, type: msg.type };
-      setToasts(prev => [...prev, newToast]);
+  useShinyMessageHandler("logEvent", (msg: { message: string; type: string }) => {
+    const newToast = { id: Date.now(), message: msg.message, type: msg.type };
+    setToasts(prev => [...prev, newToast]);
 
-      // Auto-remove after 6 seconds
-      setTimeout(() => {
-        setToasts(prev => prev.filter(toast => toast.id !== newToast.id));
-      }, 6000);
-    };
-
-    window.Shiny.addCustomMessageHandler("logEvent", handleLogEvent);
-  }, []);
+    // Auto-remove after 6 seconds
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== newToast.id));
+    }, 6000);
+  });
 
   return (
     <div className="toast-container">
@@ -1115,7 +1181,7 @@ function App() {
 
 **R Shiny**:
 ```r
-session$sendCustomMessage("logEvent", list(
+post_message(session, "logEvent", list(
   message = "User logged in",
   type = "info"
 ))
@@ -1123,7 +1189,7 @@ session$sendCustomMessage("logEvent", list(
 
 **Python Shiny**:
 ```python
-await session.send_custom_message("logEvent", {
+await post_message(session, "logEvent", {
     "message": "User logged in",
     "type": "info"
 })
@@ -1431,7 +1497,7 @@ observe({
 
 # observeEvent for specific triggers
 observeEvent(input$send_message, {
-  session$sendCustomMessage("notification", list(
+  post_message(session, "notification", list(
     message = paste("Button clicked at", Sys.time())
   ))
 })
@@ -1453,7 +1519,7 @@ def _():
 @reactive.effect
 @reactive.event(input.send_message)
 async def _():
-    await session.send_custom_message("notification", {
+    await post_message(session, "notification", {
         "message": f"Button clicked at {datetime.now()}"
     })
 ```
@@ -1503,11 +1569,31 @@ observe({
 })
 
 # ✅ GOOD: Use reactive expressions for derived values
-values <- reactiveValues(base = 1)
+values <- reactiveValues(a = 1)
 
-derived <- reactive({
-  values$base * 2
+b <- reactive({
+  values$a + 1
 })
+
+```python
+# ❌ BAD: Can create infinite loops
+a = reactive.value(1)
+b = reactive.value(2)
+
+@reactive.effect
+def _():
+    a.set(b() + 1)  # a depends on b
+
+@reactive.effect  
+def _():
+    b.set(a() + 1)  # b depends on a - CIRCULAR!
+
+
+# ✅ GOOD: Use reactive expressions for derived values
+@reactive.calc
+def b():
+    return a() + 1
+```
 ```
 
 **3. Side Effects in Reactive Expressions**:
@@ -1527,6 +1613,75 @@ good_reactive <- reactive({
 observe({
   write.csv(good_reactive(), "output.csv")  # Side effect in observer
 })
+```
+
+```python
+# ❌ BAD: Don't have side effects in reactive expressions
+@reactive.calc
+def bad_reactive():
+    data = pd.read_csv("file.csv")
+    data.to_csv("output.csv")  # Side effect - DON'T DO THIS!
+    return data
+
+# ✅ GOOD: Use reactive effects for side effects
+@reactive.calc
+def good_reactive():
+    return pd.read_csv("file.csv")  # Pure computation
+
+@reactive.effect
+def _():
+    good_reactive().to_csv("output.csv")  # Side effect in effect
+```
+
+**4. Reactive Value Feedback Loops**:
+```r
+counter <- reactiveVal(0)
+
+# ❌ BAD: Don't have an observer that both reads and writes a reactive value.
+#        This can create an infinite loop
+observe({
+  input$click
+  counter(counter() + 1)  # Updates `counter` reactive value
+})
+
+# ✅ GOOD: Use isolate() to prevent taking dependency on reactive value that is
+#          being updated.
+observe({
+  input$click
+  isolate({
+    counter(counter() + 1) 
+  })
+})
+
+# ✅ GOOD: Use observeEvent() to only invalidate on specific inputs
+observeEvent(input.click, {
+  counter(counter() + 1)
+})
+```
+
+```python
+counter = reactive.value(0)
+
+# ❌ BAD: Don't have an observer that both reads and writes a reactive value.
+#        This can create an infinite loop
+@reactive.effect
+def _():
+    input.click()
+    counter.set(counter() + 1)  # Updates `counter` reactive value
+
+# ✅ GOOD: Use isolate() to prevent taking dependency on reactive value that is
+#          being updated.
+@reactive.effect
+def _():
+    input.click()
+    with reactive.isolate():
+        counter.set(counter() + 1)
+
+# ✅ GOOD: Use @reactive.event() to only invalidate on specific inputs
+@reactive.effect
+@reactive.event(input.click)
+def _():
+    counter.set(counter() + 1)
 ```
 
 #### Reactive Value Feedback Loops
@@ -1553,6 +1708,12 @@ observe({
 - Reserve observers/effects for side effects only
 - Avoid updating reactive values from observers when possible
 - Use `req()` (R) or conditional checks (Python) to handle missing inputs gracefully
+
+#### Scoping of reactive objects
+
+For most apps, reactive objects should be defined at the top level of the server function. The server function is executed once for each user session, so this ensures that reactive objects are scoped to the session.
+
+In some cases, it is useful to share reactive objects across sessions: for example, if there is a single connection to a data source or API , or if there is a shared state that needs to be accessed by multiple sessions. In such cases, reactive values and reactive expressions/calcs can be defined at the top level of the app, outside of the server function. This ensures that those reactive objects are shared across all sessions.
 
 
 ## Conclusion
