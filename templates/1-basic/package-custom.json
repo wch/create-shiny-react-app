@@ -4,7 +4,7 @@
     "scripts": {
       "build": "concurrently -c auto \"tsc --noEmit\" \"esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --sourcemap --minify --alias:react=react\"",
       "watch": "concurrently -c auto \"tsc --noEmit --watch --preserveWatchOutput\" \"esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --sourcemap --minify --alias:react=react --watch\"",
-      "shinyapp": "R -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=${PORT:-8000})\"",
+      "shinyapp": "Rscript -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=${PORT:-8000})\"",
       "clean": "rm -rf r/www"
     }
   },

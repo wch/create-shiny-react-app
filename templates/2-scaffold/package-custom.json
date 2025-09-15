@@ -2,7 +2,7 @@
   "note": "The content below will be substituted into package.json, depending on language selected by the user when creating the app.",
   "r": {
     "scripts": {
-      "shinyapp": "R -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=${PORT:-8000})\"",
+      "shinyapp": "Rscript -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=${PORT:-8000})\"",
       "clean": "rm -rf r/www"
     }
   },
