@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
-const readline = require("readline");
+import fs from "node:fs";
+import path, { dirname } from "node:path";
+import readline from "node:readline";
+import { fileURLToPath } from "node:url";
+
+// ES module compatibility for __dirname
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -196,7 +200,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length !== 1) {
-    console.log(c.bold("📝 Usage: create-shiny-react-app <app-name>"));
+    console.log(c.bold("Usage: create-shiny-react-app <app-name>"));
     console.log("");
     console.log(
       c.dim(
@@ -327,7 +331,9 @@ async function main() {
     }
 
     // Ask about CLAUDE.md
-    console.log(c.bold("🤖 Include CLAUDE.md for LLM assistance:"));
+    console.log(
+      c.bold("🤖 Include CLAUDE.md and SHINY-REACT.md for LLM assistance:")
+    );
     console.log("");
     console.log(`  ${c.highlight("1.")} ${c.bold("Yes")} (recommended)`);
     console.log(`  ${c.highlight("2.")} ${c.bold("No")}`);
@@ -359,7 +365,7 @@ async function main() {
     console.log(`  Backend: ${c.highlight(selectedBackend.name)}`);
     console.log(`  Target: ${c.highlight(targetDir)}`);
     if (shouldIncludeClaude) {
-      console.log(`  Including: ${c.highlight("CLAUDE.md")}`);
+      console.log(`  Including: ${c.highlight("CLAUDE.md + SHINY-REACT.md")}`);
     }
     console.log("");
 
@@ -373,15 +379,27 @@ async function main() {
     if (shouldIncludeClaude) {
       const claudeTemplatePath = path.join(templatesDir, "CLAUDE.md.template");
       const claudeDestPath = path.join(targetDir, "CLAUDE.md");
+      const shinyReactDocsPath = path.join(templatesDir, "SHINY-REACT.md");
+      const shinyReactDestPath = path.join(targetDir, "SHINY-REACT.md");
 
+      // Copy and customize CLAUDE.md.template
       if (fs.existsSync(claudeTemplatePath)) {
         // Read template and customize it with app name
         let claudeContent = fs.readFileSync(claudeTemplatePath, "utf8");
-        claudeContent = claudeContent.replace(/hello-world-app/g, appName);
+        claudeContent = claudeContent.replace(/\{project_name\}/g, appName);
         fs.writeFileSync(claudeDestPath, claudeContent);
       } else {
         console.log(
           c.warning("⚠️ Warning: CLAUDE.md.template not found, skipping...")
+        );
+      }
+
+      // Copy shiny-react.md documentation (no customization needed)
+      if (fs.existsSync(shinyReactDocsPath)) {
+        fs.copyFileSync(shinyReactDocsPath, shinyReactDestPath);
+      } else {
+        console.log(
+          c.warning("⚠️ Warning: SHINY-REACT.md not found, skipping...")
         );
       }
     }
