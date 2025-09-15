@@ -1438,6 +1438,199 @@ For most apps, reactive objects should be defined at the top level of the server
 
 In some cases, it is useful to share reactive objects across sessions: for example, if there is a single connection to a data source or API , or if there is a shared state that needs to be accessed by multiple sessions. In such cases, reactive values and reactive expressions/calcs can be defined at the top level of the app, outside of the server function. This ensures that those reactive objects are shared across all sessions.
 
+#### Python-Specific: Object Identity and Reactivity
+
+**Critical Concept**: In Python Shiny, reactivity is triggered by **object identity** changes, not value equality. This means that when you modify mutable objects like lists and dictionaries in-place, Shiny doesn't detect the change because the object identity (memory address) remains the same.
+
+**The Problem**: Mutating lists or dictionaries directly doesn't trigger reactive updates:
+
+```python
+# ❌ BAD: This doesn't trigger reactivity
+items = reactive.value(["apple", "banana"])
+
+@reactive.effect
+@reactive.event(input.add_item)
+def _():
+    current_items = items()
+    current_items.append("cherry")  # Modifies list in-place
+    items.set(current_items)  # Same object identity - no reactivity!
+
+# ❌ BAD: Dictionary modification doesn't trigger reactivity either
+user_data = reactive.value({"name": "John", "age": 30})
+
+@reactive.effect
+@reactive.event(input.update_age)
+def _():
+    current_data = user_data()
+    current_data["age"] = 31  # Modifies dict in-place
+    user_data.set(current_data)  # Same object identity - no reactivity!
+```
+
+**The Solution**: Create copies before modification to get a new object identity:
+
+```python
+# ✅ GOOD: Copy the list before modifying
+items = reactive.value(["apple", "banana"])
+
+@reactive.effect
+@reactive.event(input.add_item)  # Only react to input.add_item
+def _():
+    current_items = items()  # This doesn't create a dependency because of @reactive.event
+    new_items = current_items[:]  # Create a copy
+    new_items.append("cherry")  # Modify the copy
+    items.set(new_items)  # New object identity - triggers reactivity!
+
+# ✅ GOOD: Copy the dictionary before modifying
+user_data = reactive.value({"name": "John", "age": 30})
+
+@reactive.effect
+@reactive.event(input.update_age)  # Only react to input.update_age
+def _():
+    current_data = user_data()  # This doesn't create a dependency because of @reactive.event
+    new_data = current_data.copy()  # Create a copy
+    new_data["age"] = 31  # Modify the copy
+    user_data.set(new_data)  # New object identity - triggers reactivity!
+```
+
+**Important Note**: In the examples above, `@reactive.event` ensures the effect only reacts to specific inputs (`input.add_item`, `input.update_age`) and NOT to the reactive values we're reading (`items()`, `user_data()`). This prevents dependency loops.
+
+**Avoiding Reactive Loops**: When updating a reactive value within an effect, you need to prevent the effect from depending on that same reactive value. You can do this in two ways:
+
+**Option 1: Use `@reactive.event` to only depend on specific inputs**
+
+```python
+task_list = reactive.value([{"id": 1, "text": "Task 1", "done": False}])
+
+@reactive.effect
+@reactive.event(input.toggle_task)  # Only react to this specific input
+def _():
+    tasks = task_list()  # Safe to read - no dependency created due to @reactive.event
+    updated_tasks = [task.copy() for task in tasks]
+
+    # Find and toggle the specified task
+    task_id = input.task_id()
+    for task in updated_tasks:
+        if task["id"] == task_id:
+            task["done"] = not task["done"]
+            break
+
+    task_list.set(updated_tasks)  # Update without creating loop
+```
+
+**Option 2: Use `reactive.isolate()` when reading values you're about to update**
+
+```python
+task_list = reactive.value([{"id": 1, "text": "Task 1", "done": False}])
+
+@reactive.effect
+def _():
+    input.toggle_task()  # Take dependency on this input
+
+    # Use isolate() to read current value without creating dependency
+    with reactive.isolate():
+        tasks = task_list()  # Isolated - no dependency created
+        updated_tasks = [task.copy() for task in tasks]
+
+        # Find and toggle the specified task
+        task_id = input.task_id()
+        for task in updated_tasks:
+            if task["id"] == task_id:
+                task["done"] = not task["done"]
+                break
+
+        task_list.set(updated_tasks)  # Update without creating loop
+```
+
+**❌ BAD Example - This creates an infinite loop**:
+
+```python
+task_list = reactive.value([{"id": 1, "text": "Task 1", "done": False}])
+
+@reactive.effect
+def _():
+    tasks = task_list()  # Takes dependency on task_list
+    # Some processing logic here...
+    updated_tasks = [task.copy() for task in tasks]  # Process tasks
+    updated_tasks[0]["done"] = True
+    task_list.set(updated_tasks)  # Updates task_list - triggers this effect again!
+```
+
+**Choose Your Approach**:
+- Use `@reactive.event` when you want to react only to specific user inputs
+- Use `reactive.isolate()` when you need more complex dependency control within the same effect
+
+**Alternative Copying Methods**:
+
+```python
+# For lists:
+new_list = old_list[:]       # Slice copy
+new_list = list(old_list)    # Constructor copy
+new_list = old_list.copy()   # Method copy
+new_list = [*old_list]       # Unpacking copy
+
+# For dictionaries:
+new_dict = old_dict.copy()   # Method copy
+new_dict = dict(old_dict)    # Constructor copy
+new_dict = {**old_dict}      # Unpacking copy
+
+# For nested structures, consider deep copying:
+import copy
+new_nested = copy.deepcopy(old_nested)
+```
+
+**Complete Working Example**:
+
+```python
+# Shopping cart with add/remove functionality
+cart_items = reactive.value([])
+
+@reactive.effect
+@reactive.event(input.add_to_cart)
+def _():
+    new_item = {"id": input.product_id(), "name": input.product_name(), "qty": 1}
+
+    with reactive.isolate():
+        current_cart = cart_items()
+        new_cart = current_cart[:]  # Copy the list
+
+        # Check if item already exists
+        existing_item = next((item for item in new_cart if item["id"] == new_item["id"]), None)
+        if existing_item:
+            # Update quantity (need to copy the dict too)
+            existing_item_copy = existing_item.copy()
+            existing_item_copy["qty"] += 1
+            # Replace in list
+            new_cart = [existing_item_copy if item["id"] == new_item["id"] else item for item in new_cart]
+        else:
+            new_cart.append(new_item)
+
+        cart_items.set(new_cart)  # Triggers reactivity for any outputs depending on cart_items
+
+@reactive.effect
+@reactive.event(input.remove_from_cart)
+def _():
+    item_id = input.remove_item_id()
+
+    with reactive.isolate():
+        current_cart = cart_items()
+        new_cart = [item for item in current_cart if item["id"] != item_id]
+        cart_items.set(new_cart)
+
+# Output that reacts to cart changes
+@render_json
+def cart_summary():
+    items = cart_items()  # Takes dependency - will update when cart_items changes
+    total_items = sum(item["qty"] for item in items)
+    return {"total_items": total_items, "items": items}
+```
+
+**Key Takeaways**:
+- Always create copies of mutable objects before modification
+- Use `reactive.isolate()` when reading reactive values that you're about to update
+- Python's object identity (not value equality) determines reactivity
+- This pattern is essential for lists, dictionaries, and any mutable objects
+- Consider using `copy.deepcopy()` for nested data structures
+
 
 ## TypeScript Global Types
 
