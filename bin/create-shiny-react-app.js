@@ -250,9 +250,9 @@ async function main() {
 
     // Get user's template choice
     const templateChoice = await question(
-      c.info(`Choose a template (1-${availableTemplates.length}) [1]: `)
+      c.info(`Choose a template (1-${availableTemplates.length}) [2]: `)
     );
-    const choiceIndex = parseInt(templateChoice || "1") - 1;
+    const choiceIndex = parseInt(templateChoice || "2") - 1;
 
     if (choiceIndex < 0 || choiceIndex >= availableTemplates.length) {
       console.error(
