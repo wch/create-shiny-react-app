@@ -38,6 +38,19 @@ React Component <──[useShinyOutput]── Shiny Server
 ```
 
 
+## Available Hooks and Components
+
+The shiny-react library provides the following React hooks and components:
+
+### Hooks
+- **`useShinyInput<T>`**: Send data from React to Shiny server (similar to useState)
+- **`useShinyOutput<T>`**: Receive data from Shiny server to React components
+- **`useShinyMessageHandler<T>`**: Handle custom messages from server with automatic cleanup
+- **`useShinyInitialized`**: Track whether Shiny has been initialized and is ready
+
+### Components
+- **`ImageOutput`**: Display Shiny image outputs with dynamic sizing
+
 ## Complete API Reference
 
 ### useShinyInput Hook
@@ -208,7 +221,24 @@ function NotificationComponent() {
 }
 ```
 
+### useShinyInitialized Hook
 
+```typescript
+function useShinyInitialized(): boolean
+```
+
+**Purpose**: Tracks whether Shiny has been initialized and is ready for use.
+
+**Parameters**: None
+
+**Returns**: `boolean` indicating whether Shiny has been initialized
+
+**Key Behaviors**:
+- Returns `false` initially before Shiny is ready
+- Returns `true` once `window.Shiny.initializedPromise` resolves
+
+
+### ImageOutput Component
 
 ```typescript
 function ImageOutput({
