@@ -14,7 +14,7 @@ This is **{project_name}**, a Shiny-React application created from a template. T
 
 ## Tools
 
-You may have access to a shadcn/ui MCP server. If so, use it to find and install UI components.
+You may have access to a shadcn MCP server. If so, use it to find and install UI components when the user asks you to implement UI.
 
 ## Directory Structure
 
