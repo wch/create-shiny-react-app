@@ -16,6 +16,8 @@ This is **{project_name}**, a Shiny-React application created from a template. T
 
 You may have access to a shadcn MCP server. If so, use it to find and install UI components when the user asks you to implement UI.
 
+IMPORTANT: in most casees, the user will already be running `npm run dev` while you are working, so you do not need to run `npm run build` yourself, or start the Shiny app with `npm run shinyapp`. If you want to know whether a build is working, ask the user what the output is from the relevant command, and offer to run it if they are not doing so already.
+
 ## Directory Structure
 
 ```
