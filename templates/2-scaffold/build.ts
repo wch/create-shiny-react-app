@@ -1,7 +1,7 @@
 import chokidar from "chokidar";
 import * as esbuild from "esbuild";
 import tailwindPlugin from "esbuild-plugin-tailwindcss";
-import { existsSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 
 const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
@@ -99,8 +99,12 @@ async function main() {
       build
         .then(async (context: esbuild.BuildContext) => {
           console.log(`Building .js bundle for ${target} target...`);
-          await context.rebuild();
+          const result = await context.rebuild();
           console.log(`✓ Successfully built ${target}/www/main.js`);
+          if (metafile) {
+            writeFileSync("esbuild-meta.json", JSON.stringify(result.metafile));
+            console.log("✓ Successfully wrote esbuild-meta.json");
+          }
           await context.dispose();
         })
         .catch((e) => {
