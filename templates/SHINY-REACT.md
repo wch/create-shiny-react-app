@@ -246,13 +246,15 @@ function ImageOutput({
   className,
   width,
   height,
-  debounceMs = 400
+  debounceMs = 400,
+  onRecalculating
 }: {
   id: string;
   className?: string;
   width?: string;
   height?: string;
   debounceMs?: number;
+  onRecalculating?: (isRecalculating: boolean) => void;
 }): JSX.Element
 ```
 
@@ -264,11 +266,11 @@ function ImageOutput({
 - `width`: Optional width as a CSS size string (e.g., "300px", "50%", "auto")
 - `height`: Optional height as a CSS size string (e.g., "200px", "50vh", "auto")
 - `debounceMs`: Debounce delay in milliseconds for dimension changes (default: 400ms)
+- `onRecalculating`: Optional callback function called when recalculation status changes. Receives a boolean indicating whether the image is currently recalculating
 
 **Features**:
 - Automatically tracks rendered dimensions and sends them to Shiny via clientData
 - Updates Shiny when image size changes using ResizeObserver with debouncing
-- Shows loading state (reduced opacity) when image is recalculating
 - Hides image when Shiny sets the hidden state
 - Handles image load events for accurate dimension reporting
 
@@ -307,6 +309,22 @@ function FlexPlot() {
   return (
     <div className="flex-container">
       <ImageOutput id="plot3" className="flex-image" />
+    </div>
+  );
+}
+
+// With recalculation status tracking:
+function PlotWithLoadingIndicator() {
+  const [isRecalculating, setIsRecalculating] = useState(false);
+
+  return (
+    <div>
+      <h2>My Plot {isRecalculating && "(Updating...)"}</h2>
+      <ImageOutput
+        id="plot4"
+        className="responsive-image"
+        onRecalculating={setIsRecalculating}
+      />
     </div>
   );
 }
