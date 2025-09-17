@@ -19,6 +19,7 @@ function ExampleComponent() {
           value={txtin}
           onChange={handleInputChange}
           placeholder='Enter your message here...'
+          autoComplete='off'
         />
       </div>
       <hr />
