@@ -43,6 +43,7 @@ const c = {
   info: (text) => `${colors.blue}${text}${colors.reset}`,
   warning: (text) => `${colors.yellow}${text}${colors.reset}`,
   highlight: (text) => `${colors.cyan}${colors.bright}${text}${colors.reset}`,
+  command: (text) => `${colors.yellow}${colors.bright}${text}${colors.reset}`,
   dim: (text) => `${colors.gray}${text}${colors.reset}`,
   bold: (text) => `${colors.bright}${text}${colors.reset}`,
 };
@@ -409,35 +410,35 @@ async function main() {
     console.log(c.bold("🚀 Next steps:"));
 
     console.log("  # Go to app directory:");
-    console.log(`  ${c.highlight(`cd ${appName}`)}`);
+    console.log(`  ${c.command(`cd ${appName}`)}`);
     console.log("");
 
     console.log("  # Install JavaScript dependencies:");
-    console.log(`  ${c.highlight("npm install")}`);
+    console.log(`  ${c.command("npm install")}`);
     console.log("");
 
     if (selectedBackend.id === "py" && pythonPackageManager !== "none") {
       console.log("  # Install Python dependencies:");
       console.log("    # Optional: Set up virtual environment");
       if (pythonPackageManager === "uv") {
-        console.log(`    ${c.highlight("uv venv")}`);
+        console.log(`    ${c.command("uv venv")}`);
       } else {
-        console.log(`    ${c.highlight("python -m venv .venv")}`);
+        console.log(`    ${c.command("python -m venv .venv")}`);
       }
       const isWindows = process.platform === "win32";
       const activateCommand = isWindows
         ? "    .venv\\Scripts\\activate"
         : "    source .venv/bin/activate";
-      console.log(`    ${c.highlight(activateCommand.trim())}`);
+      console.log(`    ${c.command(activateCommand.trim())}`);
       console.log("");
       console.log("    # Install Python packages:");
 
       if (pythonPackageManager === "uv") {
         console.log(
-          `    ${c.highlight("uv pip install -r py/requirements.txt")}`,
+          `    ${c.command("uv pip install -r py/requirements.txt")}`,
         );
       } else if (pythonPackageManager === "pip") {
-        console.log(`    ${c.highlight("pip install -r py/requirements.txt")}`);
+        console.log(`    ${c.command("pip install -r py/requirements.txt")}`);
       }
       console.log("");
     }
@@ -453,7 +454,7 @@ async function main() {
     console.log(
       "  # Build the frontend JS and launch the Shiny app (will rebuild/reload on changes):",
     );
-    console.log(`  ${c.highlight("npm run dev")}`);
+    console.log(`  ${c.command("npm run dev")}`);
 
     console.log("");
     console.log(
