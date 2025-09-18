@@ -70,7 +70,7 @@ function getAvailableTemplates(templatesDir) {
       if (fs.existsSync(packageJsonPath)) {
         try {
           const packageJson = JSON.parse(
-            fs.readFileSync(packageJsonPath, "utf8")
+            fs.readFileSync(packageJsonPath, "utf8"),
           );
           if (packageJson.description) {
             description = packageJson.description;
@@ -146,7 +146,7 @@ function updatePackageJson(targetDir, appName, selectedBackend) {
     if (fs.existsSync(packageCustomPath)) {
       try {
         const packageConfig = JSON.parse(
-          fs.readFileSync(packageCustomPath, "utf8")
+          fs.readFileSync(packageCustomPath, "utf8"),
         );
         const backendConfig = packageConfig[selectedBackend];
 
@@ -162,8 +162,8 @@ function updatePackageJson(targetDir, appName, selectedBackend) {
       } catch (e) {
         console.log(
           c.warning(
-            "⚠️ Warning: Could not apply customized package configuration for R/Python!"
-          )
+            "⚠️ Warning: Could not apply customized package configuration for R/Python!",
+          ),
         );
       }
     }
@@ -204,8 +204,8 @@ async function main() {
     console.log("");
     console.log(
       c.dim(
-        "Creates a new shiny-react application with your choice of template."
-      )
+        "Creates a new shiny-react application with your choice of template.",
+      ),
     );
     console.log("");
     console.log(c.bold("Example:"));
@@ -228,10 +228,10 @@ async function main() {
 
   if (!fs.existsSync(templatesDir)) {
     console.error(
-      c.error("❌ Error: templates/ directory not found in CLI package.")
+      c.error("❌ Error: templates/ directory not found in CLI package."),
     );
     console.error(
-      c.dim("Please ensure create-shiny-react-app is properly installed.")
+      c.dim("Please ensure create-shiny-react-app is properly installed."),
     );
     process.exit(1);
   }
@@ -241,7 +241,7 @@ async function main() {
 
   try {
     console.log(
-      c.success(`✨ Creating new shiny-react app: ${c.highlight(appName)}`)
+      c.success(`✨ Creating new shiny-react app: ${c.highlight(appName)}`),
     );
     console.log("");
 
@@ -250,15 +250,15 @@ async function main() {
 
     // Get user's template choice
     const templateChoice = await question(
-      c.info(`Choose a template (1-${availableTemplates.length}) [2]: `)
+      c.info(`Choose a template (1-${availableTemplates.length}) [2]: `),
     );
     const choiceIndex = parseInt(templateChoice || "2") - 1;
 
     if (choiceIndex < 0 || choiceIndex >= availableTemplates.length) {
       console.error(
         c.error(
-          `❌ Invalid choice. Please select a number between 1 and ${availableTemplates.length}.`
-        )
+          `❌ Invalid choice. Please select a number between 1 and ${availableTemplates.length}.`,
+        ),
       );
       process.exit(1);
     }
@@ -274,13 +274,13 @@ async function main() {
 
     // Get user's backend choice
     const backendChoice = await question(
-      c.info("Choose a backend (1-2) [1]: ")
+      c.info("Choose a backend (1-2) [1]: "),
     );
     const backendIndex = parseInt(backendChoice || "3") - 1;
 
     if (backendIndex < 0 || backendIndex >= BACKENDS.length) {
       console.error(
-        c.error("❌ Invalid choice. Please select a number between 1 and 2.")
+        c.error("❌ Invalid choice. Please select a number between 1 and 2."),
       );
       process.exit(1);
     }
@@ -303,18 +303,18 @@ async function main() {
       console.log(c.bold("📦Show instructions for Python package manager:"));
       console.log("");
       console.log(
-        `  ${c.highlight("1.")} ${c.bold("uv")} (recommended - fastest)`
+        `  ${c.highlight("1.")} ${c.bold("uv")} (recommended - fastest)`,
       );
       console.log(`  ${c.highlight("2.")} ${c.bold("pip")} (standard)`);
       console.log(
-        `  ${c.highlight("3.")} ${c.bold("None")} (skip package installation instructions)`
+        `  ${c.highlight("3.")} ${c.bold("None")} (skip package installation instructions)`,
       );
       console.log("");
 
       let packageManagerChoice;
       do {
         packageManagerChoice = await question(
-          c.info("Choose package manager (1-3) [1]: ")
+          c.info("Choose package manager (1-3) [1]: "),
         );
         const pmIndex = parseInt(packageManagerChoice || "1") - 1;
 
@@ -332,7 +332,7 @@ async function main() {
 
     // Ask about CLAUDE.md
     console.log(
-      c.bold("🤖 Include CLAUDE.md and SHINY-REACT.md for LLM assistance:")
+      c.bold("🤖 Include CLAUDE.md and SHINY-REACT.md for LLM assistance:"),
     );
     console.log("");
     console.log(`  ${c.highlight("1.")} ${c.bold("Yes")} (recommended)`);
@@ -360,7 +360,7 @@ async function main() {
     console.log("");
     console.log("ℹ️ Configuration summary:");
     console.log(
-      `  Template: ${c.highlight(selectedTemplate.name)} (${selectedTemplate.id})`
+      `  Template: ${c.highlight(selectedTemplate.name)} (${selectedTemplate.id})`,
     );
     console.log(`  Backend: ${c.highlight(selectedBackend.name)}`);
     console.log(`  Target: ${c.highlight(targetDir)}`);
@@ -390,7 +390,7 @@ async function main() {
         fs.writeFileSync(claudeDestPath, claudeContent);
       } else {
         console.log(
-          c.warning("⚠️ Warning: CLAUDE.md.template not found, skipping...")
+          c.warning("⚠️ Warning: CLAUDE.md.template not found, skipping..."),
         );
       }
 
@@ -399,7 +399,7 @@ async function main() {
         fs.copyFileSync(shinyReactDocsPath, shinyReactDestPath);
       } else {
         console.log(
-          c.warning("⚠️ Warning: SHINY-REACT.md not found, skipping...")
+          c.warning("⚠️ Warning: SHINY-REACT.md not found, skipping..."),
         );
       }
     }
@@ -434,7 +434,7 @@ async function main() {
 
       if (pythonPackageManager === "uv") {
         console.log(
-          `    ${c.highlight("uv pip install -r py/requirements.txt")}`
+          `    ${c.highlight("uv pip install -r py/requirements.txt")}`,
         );
       } else if (pythonPackageManager === "pip") {
         console.log(`    ${c.highlight("pip install -r py/requirements.txt")}`);
@@ -451,19 +451,19 @@ async function main() {
     }
 
     console.log(
-      "  # Build the frontend JS and launch the Shiny app (will rebuild/reload on changes):"
+      "  # Build the frontend JS and launch the Shiny app (will rebuild/reload on changes):",
     );
     console.log(`  ${c.highlight("npm run dev")}`);
 
     console.log("");
     console.log(
-      `${c.success("🌐 Open")} ${c.highlight("http://localhost:8000")} ${c.success("in your browser.")}`
+      `${c.success("🌐 Open")} ${c.highlight("http://localhost:8000")} ${c.success("in your browser.")}`,
     );
 
     if (selectedTemplate.id.includes("chat")) {
       console.log("");
       console.log(
-        c.warning("📝 Note: The AI chat template requires LLM API keys.")
+        c.warning("📝 Note: The AI chat template requires LLM API keys."),
       );
       console.log("   See the README.md for setup instructions.");
     }
