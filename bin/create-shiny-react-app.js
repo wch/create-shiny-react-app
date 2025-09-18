@@ -276,7 +276,7 @@ async function main() {
     const backendChoice = await question(
       c.info("Choose a backend (1-2) [1]: "),
     );
-    const backendIndex = parseInt(backendChoice || "3") - 1;
+    const backendIndex = parseInt(backendChoice || "1") - 1;
 
     if (backendIndex < 0 || backendIndex >= BACKENDS.length) {
       console.error(
