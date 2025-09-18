@@ -1,3 +1,4 @@
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import ExampleComponent from "./ExampleComponent";
 import "./styles.css";
@@ -5,7 +6,11 @@ import "./styles.css";
 const container = document.getElementById("root");
 if (container) {
   const root = createRoot(container);
-  root.render(<ExampleComponent />);
+  root.render(
+    <StrictMode>
+      <ExampleComponent />
+    </StrictMode>,
+  );
 } else {
   console.error("Could not find root element to mount React component.");
 }
